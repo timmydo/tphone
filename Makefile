@@ -3,7 +3,7 @@
 default: run
 download: debian-arm64.qcow2
 deps:
-	sudo apt-get install qemu-utils qemu-efi-aarch64 qemu-system-arm
+	sudo apt-get install qemu-utils qemu-efi-aarch64 qemu-system-arm cloud-image-utils
 
 debian-arm64.qcow2.orig:
 	curl -Lo debian-arm64.qcow2.orig 'https://cdimage.debian.org/cdimage/openstack/current/debian-10.2.0-openstack-arm64.qcow2'
@@ -17,7 +17,7 @@ debian-arm64.qcow2: debian-arm64.qcow2.orig
 gen:
 	mkdir gen
 
-gen/seed.img: meta-data.yaml user-data.yaml
+gen/seed.img: gen meta-data.yaml user-data.yaml
 	cloud-localds -v gen/seed.img user-data.yaml meta-data.yaml
 
 build: debian-arm64.qcow2 gen/seed.img
