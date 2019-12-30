@@ -1,19 +1,21 @@
 DISPLAY=sdl
+DISKIMAGE=debian-arm64.qcow2
+MEM=2G
 
 .PHONY: default download deps touchdisk run build
 default: run
-download: debian-arm64.qcow2
+download: $(DISKIMAGE)
 deps:
 	sudo apt-get install qemu-utils qemu-efi-aarch64 qemu-system-arm cloud-image-utils
 
-debian-arm64.qcow2.orig:
-	curl -Lo debian-arm64.qcow2.orig 'https://cdimage.debian.org/cdimage/openstack/current/debian-10.2.0-openstack-arm64.qcow2'
+$(DISKIMAGE).orig:
+	curl -Lo $(DISKIMAGE).orig 'https://cdimage.debian.org/cdimage/openstack/current/debian-10.2.0-openstack-arm64.qcow2'
 
-touchdisk: debian-arm64.qcow2.orig
-	touch debian-arm64.qcow2.orig
+touchdisk: $(DISKIMAGE).orig
+	touch $(DISKIMAGE).orig
 
-debian-arm64.qcow2: debian-arm64.qcow2.orig
-	cp debian-arm64.qcow2.orig debian-arm64.qcow2
+$(DISKIMAGE): $(DISKIMAGE).orig
+	cp $(DISKIMAGE).orig $(DISKIMAGE)
 
 gen:
 	mkdir gen
@@ -21,15 +23,15 @@ gen:
 gen/seed.img: gen meta-data.yaml user-data.yaml
 	cloud-localds -v gen/seed.img user-data.yaml meta-data.yaml
 
-build: debian-arm64.qcow2 gen/seed.img
+build: $(DISKIMAGE) gen/seed.img
 	@echo Done
 
 #	-smbios 'type=1,serial=ds=nocloud;s=/'
-run: debian-arm64.qcow2 gen/seed.img
+run: $(DISKIMAGE) gen/seed.img
 	@echo Use Ctrl-Alt-2 to go to boot console
-	qemu-system-aarch64 -m 2G -M virt -cpu cortex-a53 \
+	qemu-system-aarch64 -m $(MEM) -M virt -cpu cortex-a53 \
 	-bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd \
-	-drive if=none,file=debian-arm64.qcow2,id=hd0 -device virtio-blk-device,drive=hd0 \
+	-drive if=none,file=$(DISKIMAGE),id=hd0 -device virtio-blk-device,drive=hd0 \
 	-drive if=none,file=gen/seed.img,format=raw,id=cidata -device virtio-blk-device,drive=cidata \
 	-device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22 \
 	-display $(DISPLAY)
