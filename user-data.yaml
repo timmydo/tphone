@@ -1,15 +1,17 @@
 #cloud-config
 users:
   - name: timmy
-    lock_passwd: False
-    sudo: ALL=(ALL) ALL
+    sudo: ["ALL=(ALL) ALL"]
+    shell: "/bin/bash"
+    groups: ["adm", "audio", "users", "dialout", "sudo", "video", "systemd-journal"]
+    lock_passwd: false
     passwd: "$6$H75nZXChcglVn$OFTJP885tC9ukX6.N9DbVsUmSDiMCkKhCM2U0nUt1TfSEbFTwREOEydJ0jSA2c3pV9cjy2DSQ2bHjiHC9LehL0"
     ssh_authorized_keys:
       - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCuxtFkVMpX1ie+Wnp3lnqH4pd1CgZWtahP/ebISIgbco4uuD/bG+JdujqtKX38UmsqzLykH8d6HZo/SXt33s3priqK4xzqhvOlgGQ5c0Mgt/jpJ1fBmo1ZixaC2YkVo9gF5hy3CwKfn+wFzOVtZyolrVwGbZlDNM98cR9/vUs2Sum1J74HjAIJ6ntLXdBUqOzA8bF/ByakTJAn8blcLvZ6+hlhdadRkX+o9/JQ5lYBsJ0nyHvXdn6tGn7SHeW8JYU2DFueYYiaDrKH1AYm5TjeORADPIj0crkm3jOL300VzDiuEntskU3J/FIFx5uPM9QYhK/onukoSZ6BtnzEkr8z timmy@snowcore1"
-    groups: users
-password: passw0rd
-chpasswd:
-  list: |
-    timmy:password
-  expire: False
-ssh_pwauth: True
+ssh_pwauth: false
+#package_update: true
+#package_upgrade: true
+package_reboot_if_required: true
+#packages:
+#  - pwgen
+#  - weston
