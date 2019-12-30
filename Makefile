@@ -1,6 +1,6 @@
 
-.PHONY: default download deps touchdisk
-default: build
+.PHONY: default download deps touchdisk run
+default: run
 download: debian-arm64.qcow2
 deps:
 	sudo apt-get install qemu-utils qemu-efi-aarch64 qemu-system-arm
@@ -16,12 +16,6 @@ debian-arm64.qcow2: debian-arm64.qcow2.orig
 
 gen:
 	mkdir gen
-
-gen/meta-data: gen
-	printf "instance-id: local01\nlocal-hostname: cloudimg" > gen/meta-data
-
-gen/user-data: gen
-	printf "#cloud-config\npassword: passw0rd\nchpasswd: { expire: False }\nssh_pwauth: True\n" > gen/user-data
 
 gen/seed.img: meta-data.yaml user-data.yaml
 	cloud-localds -v gen/seed.img user-data.yaml meta-data.yaml

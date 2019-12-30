@@ -3,7 +3,7 @@ users:
   - name: timmy
     sudo: ["ALL=(ALL) ALL"]
     shell: "/bin/bash"
-    groups: ["adm", "audio", "users", "dialout", "sudo", "video", "systemd-journal"]
+    groups: ["adm", "audio", "users", "dialout", "sudo", "video", "systemd-journal", "weston-launch"]
     lock_passwd: false
     passwd: "$6$H75nZXChcglVn$OFTJP885tC9ukX6.N9DbVsUmSDiMCkKhCM2U0nUt1TfSEbFTwREOEydJ0jSA2c3pV9cjy2DSQ2bHjiHC9LehL0"
     ssh_authorized_keys:
@@ -12,6 +12,6 @@ ssh_pwauth: false
 #package_update: true
 #package_upgrade: true
 package_reboot_if_required: true
-#packages:
-#  - pwgen
-#  - weston
+packages:
+  - pwgen
+  - weston
