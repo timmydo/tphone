@@ -1,5 +1,6 @@
+DISPLAY=sdl
 
-.PHONY: default download deps touchdisk run
+.PHONY: default download deps touchdisk run build
 default: run
 download: debian-arm64.qcow2
 deps:
@@ -21,7 +22,7 @@ gen/seed.img: gen meta-data.yaml user-data.yaml
 	cloud-localds -v gen/seed.img user-data.yaml meta-data.yaml
 
 build: debian-arm64.qcow2 gen/seed.img
-	echo test
+	@echo Done
 
 #	-smbios 'type=1,serial=ds=nocloud;s=/'
 run: debian-arm64.qcow2 gen/seed.img
@@ -31,4 +32,4 @@ run: debian-arm64.qcow2 gen/seed.img
 	-drive if=none,file=debian-arm64.qcow2,id=hd0 -device virtio-blk-device,drive=hd0 \
 	-drive if=none,file=gen/seed.img,format=raw,id=cidata -device virtio-blk-device,drive=cidata \
 	-device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22 \
-	-display sdl
+	-display $(DISPLAY)
