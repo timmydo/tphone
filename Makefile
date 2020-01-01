@@ -1,6 +1,7 @@
 QEMU=qemu-system-aarch64
 QEMUDISPLAY=gtk
-GFXDEVICE=virtio-gpu-pci
+#GFXDEVICE=virtio-gpu-pci
+GFXDEVICE=VGA
 DISKIMAGE=debian-arm64.qcow2
 MEM=2G
 SMP=4
@@ -49,4 +50,6 @@ run: $(DISKIMAGE) gen/seed.img
 	-device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22 \
 	-smp $(SMP) \
 	-display $(QEMUDISPLAY) \
-	-device $(GFXDEVICE)
+	-device $(GFXDEVICE) \
+	-device virtio-tablet-pci \
+	-device virtio-keyboard-pci
