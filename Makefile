@@ -1,15 +1,21 @@
 QEMU=qemu-system-aarch64
 QEMUDISPLAY=gtk
+GFXDEVICE=virtio-gpu-pci
 DISKIMAGE=debian-arm64.qcow2
 MEM=2G
 SMP=4
 BIOS=/usr/share/qemu-efi-aarch64/QEMU_EFI.fd
 
-.PHONY: default download deps touchdisk run build
+.PHONY: default download deps touchdisk run build qemu-deps
 default: run
 download: $(DISKIMAGE)
 qemu-deps:
 	sudo apt-get install libgtk-3-dev libpixman-1-dev gettext
+
+qemu-system-aarch64: qemu-deps
+	git clone https://git.qemu.org/git/qemu.git
+	cd qemu
+	./configure --target-list=aarch64-softmmu --enable-gtk && make && sudo make install
 
 deps:
 	sudo apt-get install qemu-utils qemu-efi-aarch64 qemu-system-arm cloud-image-utils libvirt-clients
@@ -43,4 +49,4 @@ run: $(DISKIMAGE) gen/seed.img
 	-device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22 \
 	-smp $(SMP) \
 	-display $(QEMUDISPLAY) \
-	-device virtio-gpu-pci
+	-device $(GFXDEVICE)
